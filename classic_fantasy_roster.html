@@ -26,181 +26,212 @@
             </label>
           </div>
 
-          <forces>
+          <div class="force-title-banner">
+            BATTLE FORCE: 
+            <if field="customName">{{customName}} ({{catalogueName}})</if>
+            <if field="customName" type="not">{{catalogueName}}</if>
+          </div>
+
+          <div class="roster-page force-container">
             
-            <div class="force-title-banner">
-              BATTLE FORCE: 
-              <if field="customName">{{customName}} ({{catalogueName}})</if>
-              <if field="customName" type="not">{{catalogueName}}</if>
+            <div class="document-header">
+              <div class="header-row">
+                <div class="header-field"><span class="label">PLAYER:</span><span class="line"></span></div>
+                <div class="header-field"><span class="label">ARMY NAME:</span><span class="line force-name-text"><if field="customName">{{customName}}</if><if field="customName" type="not">{{name}}</if></span></div>
+              </div>
+              <div class="header-row">
+                
+                <div class="header-field"><span class="label">GENERAL:</span><span class="line force-name-text">
+                  <groupBy>
+                    <units>
+                      <by><if field="primary">{{primary}}</if></by>
+                    </units>
+                    <groups>
+                      <items>
+                        <set name="isGen" value="false"/>
+                        <entries recursive="true">
+                          <if field="name" type="match" value="General" flags="i"><set name="isGen" value="true"/></if>
+                          <if field="categories">
+                            <categories><if field="name" type="match" value="General" flags="i"><set name="isGen" value="true"/></if></categories>
+                          </if>
+                        </entries>
+                        <if field="isGen" type="equals" value="true">
+                          <if field="customName">{{customName}} (</if>{{name}}<if field="customName">)</if>
+                        </if>
+                      </items>
+                    </groups>
+                  </groupBy>
+                </span></div>
+                
+                <div class="header-field"><span class="label">TOTAL PTS:</span><span class="line force-name-text">
+                  <costs><if field="name" type="match" value="pts" flags="i">{{value}}</if></costs>
+                </span></div>
+                
+              </div>
             </div>
 
-            <div class="roster-page force-container">
-              
-              <div class="document-header">
-                <div class="header-row">
-                  <div class="header-field"><span class="label">PLAYER:</span><span class="line"></span></div>
-                  <div class="header-field"><span class="label">ARMY NAME:</span><span class="line force-name-text"><if field="customName">{{customName}}</if><if field="customName" type="not">{{name}}</if></span></div>
-                </div>
-                <div class="header-row">
-                  
-                  <div class="header-field"><span class="label">GENERAL:</span><span class="line force-name-text">
-                    <units>
-                      <set name="isGen" value="false"/>
-                      <entries recursive="true">
-                        <if field="name" type="match" value="General" flags="i"><set name="isGen" value="true"/></if>
-                        <categories><if field="name" type="match" value="General" flags="i"><set name="isGen" value="true"/></if></categories>
-                      </entries>
-                      <if field="isGen" type="equals" value="true">
-                        <if field="customName">{{customName}} (</if>{{name}}<if field="customName">)</if>
-                      </if>
-                    </units>
-                  </span></div>
-                  
-                  <div class="header-field"><span class="label">TOTAL PTS:</span><span class="line force-name-text">
-                    <costs><if field="name" type="match" value="pts" flags="i">{{value}}</if></costs>
-                  </span></div>
-                  
-                </div>
-              </div>
+            <groupBy>
+              <units>
+                <by>
+                  <if field="primary">{{primary}}</if>
+                  <if field="primary" type="not">General Rules</if>
+                </by>
+              </units>
 
-              <categories skip-empty="true">
-                <if field="name" type="match" value="^(Lord|Lords|Heroes|Core|Special|Rare|Mercenaries|Regiments? of Renown|Characters|Special Characters|Named Characters)$" flags="i">
-                  
+              <groups>
+                <if field="primary" type="not-match" value="^(Special list rules|Experimental rules)$" flags="i">
                   <div class="category-block">
-                    <h3 class="category-title">{{name}}</h3>
+                    <items max="1">
+                      <h3 class="category-title">
+                        <if field="primary">{{primary}}</if>
+                        <if field="primary" type="not">General Rules</if>
+                      </h3>
+                    </items>
                     
-                    <units dedupe="true">
-                      <div class="unit-card">
-                        <table class="unit-table">
-                          
-                          <tr class="unit-header-row">
-                            <th colspan="2" class="unit-header-name">
-                              UNIT: 
-                              <if field="customName">{{customName}} ({{name}})</if>
-                              <if field="customName" type="not">{{name}}</if>
-                            </th>
+                    <items>
+                      <if type="has-profile" recursive="true">
+                        <div class="unit-card">
+                          <table class="unit-table">
                             
-                            <th class="unit-header-size">SIZE: <span class="calc-size"><entries><if field="type" type="equals" value="model">{{number}}{{amount}}</if></entries></span><span class="fallback-size">{{number}}{{amount}}</span></th>
-
-                            <th class="unit-header-pts">PTS: 
-                              <costs><if field="name" type="match" value="pts" flags="i">{{value}}</if></costs>
-                            </th>
-                            
-                            <th class="unit-header-upgrades">UPGRADES / SELECTIONS</th>
-                            <th class="unit-header-rules">RULES</th>
-                          </tr>
-                          
-                          <tr class="unit-data-row">
-                            
-                            <td colspan="4" class="profile-cell">
-                              <profiles grouped="true" amount="false" exclude="{{ruleProfiles}}">
-                                <table class="profile-inner-table">
-                                  <items max="1">
-                                    <tr>
-                                      <th class="profile-type">{{typeName}}</th>
-                                      <characteristics><if field="length" type="not-equals" value="1"><th class="stat-heading">{{name}}</th></if></characteristics>
-                                    </tr>
-                                  </items>
-                                  <items>
-                                    <tr class="stat-row">
-                                      <characteristics>
-                                        <if field="length" type="equals" value="1">
-                                          <td class="name single-data" colspan="15">
-                                            <span class="profile-name">{{item.name}}</span><span class="data" type="markdown">{{value}}</span>
-                                          </td>
-                                        </if>
-                                      </characteristics>
-                                      <else>
-                                        <td class="name">{{item.name}}</td>
-                                        <characteristics><td class="data" type="markdown">{{value}}</td></characteristics>
-                                      </else>
-                                    </tr>
-                                  </items>
-                                </table>
-                              </profiles>
-                            </td>
-                            
-                            <td class="upgrades-cell">
+                            <tr class="unit-header-row">
+                              <th colspan="2" class="unit-header-name">
+                                UNIT: 
+                                <if field="customName">{{customName}} ({{name}})</if>
+                                <if field="customName" type="not">{{name}}</if>
+                              </th>
                               
-                              <costs>
-                                <if field="name" type="not-match" value="pts" flags="i">
-                                  <div class="list-item"><strong>{{name}}:</strong> {{value}}</div>
-                                </if>
-                              </costs>
+                              <th class="unit-header-size">SIZE: <span class="calc-size"><entries><if field="type" type="equals" value="model">{{number}}{{amount}}</if></entries></span><span class="fallback-size">{{number}}{{amount}}</span></th>
 
-                              <set name="parentUnitName" value="{{name}}"/>
-                              <dedupe>
-                                <entries>
-                                  <if field="type" type="equals" value="upgrade">
-                                    <if field="name" type="not-equals" value="{{parentUnitName}}">
-                                      <div class="list-item">
-                                        <if field="number" type="greater" value="1">{{number}}x </if>
-                                        <if field="amount" type="greater" value="1">{{amount}}x </if>
-                                        {{name}}
-                                      </div>
-                                    </if>
-                                  </if>
-                                </entries>
-
-                                <entries>
-                                  <if field="type" type="equals" value="model">
-                                    <entries>
-                                      <if field="type" type="equals" value="upgrade">
-                                        <if field="name" type="not-equals" value="{{parentUnitName}}">
-                                          <div class="list-item">
-                                            <if field="number" type="greater" value="1">{{number}}x </if>
-                                            <if field="amount" type="greater" value="1">{{amount}}x </if>
-                                            {{name}}
-                                          </div>
-                                        </if>
-                                      </if>
-                                    </entries>
-                                  </if>
-                                </entries>
-                              </dedupe>
-                            </td>
+                              <th class="unit-header-pts">PTS: 
+                                <costs><if field="name" type="match" value="pts" flags="i">{{value}}</if></costs>
+                              </th>
+                              
+                              <th class="unit-header-upgrades">UPGRADES / SELECTIONS</th>
+                              <th class="unit-header-rules">RULES</th>
+                            </tr>
                             
-                            <td class="rules-cell">
-                              <dedupe>
-                                <rules>
-                                  <div class="list-item">{{name}}</div>
-                                </rules>
-                                <profiles include="{{ruleProfiles}}">
-                                  <div class="list-item">{{name}}</div>
+                            <tr class="unit-data-row">
+                              
+                              <td colspan="4" class="profile-cell">
+                                <profiles exclude="{{ruleProfiles}}" recursive="true" grouped="true" amount="false">
+                                  <table class="profile-inner-table">
+                                    <items max="1">
+                                      <tr>
+                                        <th class="profile-type">{{typeName}}</th>
+                                        <characteristics><if field="length" type="not-equals" value="1"><th class="stat-heading">{{name}}</th></if></characteristics>
+                                      </tr>
+                                    </items>
+                                    <items>
+                                      <tr class="stat-row">
+                                        <characteristics>
+                                          <if field="length" type="equals" value="1">
+                                            <td class="name single-data" colspan="15">
+                                              <span class="profile-name">{{item.name}}</span><span class="data" type="markdown">{{value}}</span>
+                                            </td>
+                                          </if>
+                                        </characteristics>
+                                        <else>
+                                          <td class="name">{{item.name}}</td>
+                                          <characteristics><td class="data" type="markdown">{{value}}</td></characteristics>
+                                        </else>
+                                      </tr>
+                                    </items>
+                                  </table>
                                 </profiles>
-                              </dedupe>
-                            </td>
-                          </tr>
-                          
-                        </table>
-                      </div>
-                    </units>
-                  </div>
-                  
-                </if>
-              </categories>
+                              </td>
+                              
+                              <td class="upgrades-cell">
+                                <costs>
+                                  <if field="name" type="not-match" value="pts" flags="i">
+                                    <div class="list-item"><strong>{{name}}:</strong> {{value}}</div>
+                                  </if>
+                                </costs>
 
-              <div class="global-rules-section">
-                <h2 class="rules-summary-title">RULES AND ITEMS GLOSSARY</h2>
+                                <set name="parentUnitName" value="{{name}}"/>
+                                <dedupe>
+                                  <entries>
+                                    <if field="type" type="equals" value="upgrade">
+                                      <if field="name" type="not-equals" value="{{parentUnitName}}">
+                                        <div class="list-item">
+                                          <if field="number" type="greater" value="1">{{number}}x </if>
+                                          <if field="amount" type="greater" value="1">{{amount}}x </if>
+                                          {{name}}
+                                        </div>
+                                      </if>
+                                    </if>
+                                  </entries>
+
+                                  <entries>
+                                    <if field="type" type="equals" value="model">
+                                      <entries>
+                                        <if field="type" type="equals" value="upgrade">
+                                          <if field="name" type="not-equals" value="{{parentUnitName}}">
+                                            <div class="list-item">
+                                              <if field="number" type="greater" value="1">{{number}}x </if>
+                                              <if field="amount" type="greater" value="1">{{amount}}x </if>
+                                              {{name}}
+                                            </div>
+                                          </if>
+                                        </if>
+                                      </entries>
+                                    </if>
+                                  </entries>
+                                </dedupe>
+                              </td>
+                              
+                              <td class="rules-cell">
+                                <dedupe>
+                                  <rules>
+                                    <div class="list-item">{{name}}</div>
+                                  </rules>
+                                  <profiles include="{{ruleProfiles}}">
+                                    <div class="list-item">{{name}}</div>
+                                  </profiles>
+                                </dedupe>
+                              </td>
+                            </tr>
+                            
+                          </table>
+                        </div>
+                      </if>
+                    </items>
+                  </div>
+                </if>
+              </groups>
+            </groupBy>
+
+            <div class="global-rules-section">
+              <h2 class="rules-summary-title">RULES AND ITEMS GLOSSARY</h2>
+              
+              <dedupe>
+                <entries recursive="true">
+                  <rules>
+                    <div class="global-rule-item">
+                      <span class="rule-name">{{name}}:</span>
+                      <span class="rule-desc" type="markdown">{{description}}</span>
+                    </div>
+                  </rules>
+
+                  <profiles include="{{ruleProfiles}}">
+                    <div class="global-rule-item">
+                      <span class="rule-name">{{name}}:</span>
+                      <characteristics>
+                        <span class="rule-desc" type="markdown">{{value}}</span>
+                      </characteristics>
+                    </div>
+                  </profiles>
+                </entries>
                 
-                <rules sort="true">
+                <rules>
                   <div class="global-rule-item">
                     <span class="rule-name">{{name}}:</span>
                     <span class="rule-desc" type="markdown">{{description}}</span>
                   </div>
                 </rules>
+              </dedupe>
+            </div>
 
-                <profiles include="{{ruleProfiles}}" sort="true">
-                  <div class="global-rule-item">
-                    <span class="rule-name">{{name}}:</span>
-                    <characteristics>
-                      <span class="rule-desc" type="markdown">{{value}}</span>
-                    </characteristics>
-                  </div>
-                </profiles>
-              </div>
-
-            </div> </forces>
+          </div> 
 
         </div> </td>
     </tr>
